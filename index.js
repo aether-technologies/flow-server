@@ -6,7 +6,7 @@ import FlowRouter from './flow/flow-router.mjs';
 import FlowManager from './flow/flow-manager.mjs';
 import FlowMonitor from './flow/flow-monitor.mjs';
 import FlowConnector from './flow/flow-connector.mjs';
-import FlowMessage from './flow/flow-messsage.mjs';
+import FlowMessage from './flow/flow-message.mjs';
 import Flow from './flow/flow.mjs';
 
 import ModuleLoaderFlow from './flow/module-loader.mjs'
