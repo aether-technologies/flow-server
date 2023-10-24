@@ -45,9 +45,6 @@ function fileExists(path) {
     }
 }
 
-const fs = require('fs');
-const path = require('path');
-
 function findFileInDirectory(directoryPath, fileName) {
     const files = fs.readdirSync(directoryPath);
     for (const file of files) {
