@@ -28,11 +28,6 @@ export default class ModuleLoaderFlow extends Flow {
 
             const module = await import(this.root + file_path);
             
-            // you could also access exported members of the module
-            // example: const { default: defaultExport, namedExport } = await import(modulePath);
-            // use the module
-            // for example, we'll just return it here
-            return module;
         } catch (error) {
             console.error(`Failed to import module at path: ${modulePath}`);
             console.error(error);
