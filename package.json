@@ -1,6 +1,6 @@
 {
   "name": "flow-server",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "description": "The server-side component of the Flow Framework.",
   "main": "index.js",
