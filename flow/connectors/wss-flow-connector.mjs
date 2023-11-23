@@ -1,4 +1,4 @@
-import { tools }  from '../../tools.mjs';
+import { tools }  from '../tools.mjs';
 import FlowConnector from '../flow-connector.mjs';
 import FlowMessage from '../flow-message.mjs';
 

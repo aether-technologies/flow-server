@@ -1,4 +1,4 @@
-import { tools } from '../tools.mjs';
+import { tools } from './tools.mjs';
 
 export default class FlowMessage {
     constructor(sender, recipient, content, origin) {

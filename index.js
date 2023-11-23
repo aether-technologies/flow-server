@@ -11,6 +11,8 @@ import Flow from './flow/flow.mjs';
 
 import ModuleLoaderFlow from './flow/module-loader.mjs'
 
+import tools from './flow/tools.mjs';
+
 export default class FlowNode extends BaseFlowNode {
   constructor(id="ServerFlowNode") {
     super(id);
@@ -25,7 +27,11 @@ export {
   Flow,
   FlowMessage,
   FlowConnector,
+  LocalFlowConnector,
+  WssFlowConnector,
   FlowRouter,
   FlowManager,
-  FlowMonitor
+  FlowMonitor,
+  BaseFlowNode,
+  tools
 }
