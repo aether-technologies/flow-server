@@ -11,10 +11,10 @@ import Flow from './flow/flow.mjs';
 
 import ModuleLoaderFlow from './flow/module-loader.mjs'
 
-import tools from './flow/tools.mjs';
+import { tools } from './flow/tools.mjs';
 
 export default class FlowNode extends BaseFlowNode {
-  constructor(id="ServerFlowNode") {
+  constructor(id="FlowNode") {
     super(id);
 
     this.initialize();
