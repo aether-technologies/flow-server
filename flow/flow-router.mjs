@@ -3,12 +3,12 @@ import FlowMonitor from './flow-monitor.mjs';
 import FlowMessage from './flow-message.mjs';
 
 export default class FlowRouter {
-      constructor(id_=null) {
+      constructor(config={}) {
         if(FlowRouter.exists) {
           return FlowRouter.instance
         }
-        this.id = id_ || 'FlowRouter';
-        this.logging = true;
+        this.id = config.id || 'FlowRouter';
+        this.logging = config.logging || false;
         this.max_hops = 5; // Another configurable item.
         this.connectors = [];
         this.connection_timeout = 60*1000; // one minute
@@ -49,7 +49,7 @@ export default class FlowRouter {
   // receive flow message from chatbox or bot
   routeFlowMessage(message) {
     if(message.hops >= this.max_hops) {
-      console.log(`[FlowRouter][warning] Message '${message.id}' has been passed around ${message.hops} times.  Discarding.`);
+      if(this.logging) console.log(`[FlowRouter][warning] Message '${message.id}' has been passed around ${message.hops} times.  Discarding.`);
       return;
     }
     // evaluate load distribution
@@ -60,7 +60,7 @@ export default class FlowRouter {
       if(this.logging) console.log(`[FlowRouter][info] Routing message '${message.id}' from ${message.origin}:${message.sender} for ${message.recipient} to ${connector.id}`);
       connector.sendMessage(message);
     } else {
-      console.log("No available connectors to send message");
+      if(this.logging) console.log("No available connectors to send message");
     }
   }
   
@@ -95,7 +95,7 @@ export default class FlowRouter {
   // Forward a message from a connector to the flow manager
   //TODO: Add queues to prevent stack overflow
   async forwardMessageToManager(flowMessage) {
-    console.log(`[FlowRouter][info] Forwarding message '${flowMessage.id}' to manager`);
+    if(this.logging) console.log(`[FlowRouter][info] Forwarding message '${flowMessage.id}' to manager`);
     let responseMessage = await this.flowManager.handleFlowMessage(flowMessage);
     if(responseMessage) this.routeFlowMessage(responseMessage);
   }
@@ -125,7 +125,7 @@ export default class FlowRouter {
       await Promise.race([timeout, connectorConnected]);
       const discoveryMessage = new FlowDiscoveryMessage(this, connector);
       if(replyId) discoveryMessage.gid = replyId;
-      console.log(`[FlowRouter][info] Sending FlowDiscoveryMessage ${discoveryMessage.id}`);
+      if(this.logging) console.log(`[FlowRouter][info] Sending FlowDiscoveryMessage ${discoveryMessage.id}`);
       connector.sendMessage(discoveryMessage);
       this.recentDiscoveryThreads[discoveryMessage.gid] = (new Date()).getTime();
     } catch (error) {
@@ -134,7 +134,7 @@ export default class FlowRouter {
     }
   }
   async handleFlowDiscoveryMessage(message, connector) {
-     console.log(`[FlowRouter][info] Received FlowDiscoveryMessage from ${connector.id}. Handling...`);
+     if(this.logging) console.log(`[FlowRouter][info] Received FlowDiscoveryMessage from ${connector.id}. Handling...`);
      if (!this.flowsMap.has(connector.id)) {
          this.flowsMap.set(connector.id, []);
      }

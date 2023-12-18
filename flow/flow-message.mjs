@@ -11,6 +11,12 @@ export default class FlowMessage {
         this.time = new Date().toISOString();
         this.hops = 0;
     }
+
+    createResponse(content) {
+        let response = new FlowMessage(this.recipient, this.sender, content, this.origin);
+        response.gid = this.gid;
+        return response;
+    }
 }
 
 // export default FlowMessage;

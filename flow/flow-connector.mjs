@@ -2,10 +2,11 @@ import FlowRouter from './flow-router.mjs';
 
 // Flow Connector interface
 export default class FlowConnector {
-  constructor(id) {
+  constructor(id, config = {}) {
     // A unique identifier for this connector
     // This needs to match the other side of this connector
     this.id = id;
+    this.logging = config.logging || false;
     // Reference to the flow router (to send messages back)
     this.flowRouter = new FlowRouter();
     // List of flows available on this connector
@@ -19,16 +20,16 @@ export default class FlowConnector {
 
   handleFlowDiscoveryMessage(flowDiscoveryMessage) {
     if(flowDiscoveryMessage.recipient == this.id) {
-      console.log(`[${this.id}][info] FlowDiscoveryMessage :: `+JSON.stringify(flowDiscoveryMessage, null, 2));
+      if(this.logging) console.log(`[${this.id}][info] FlowDiscoveryMessage :: `+JSON.stringify(flowDiscoveryMessage, null, 2));
       this.flowRouter.handleFlowDiscoveryMessage(flowDiscoveryMessage, this);
     } else {
-      console.log(`[${this.id}][info] Forwarding FlowDiscoveryMessage for '${flowDiscoveryMessage.recipient}'`);
+      if(this.logging) console.log(`[${this.id}][info] Forwarding FlowDiscoveryMessage for '${flowDiscoveryMessage.recipient}'`);
       this.flowRouter.routeFlowMessage(flowDiscoveryMessage);
     }
   }
   
   receiveMessage(message) {
-    console.log(`[${this.id}][info] Received message with id '${message.id}`);
+    if(this.logging) console.log(`[${this.id}][info] Received message with id '${message.id}`);
     if (!this.flowRouter) {
       throw new Error(`[${this.id}][error] No FlowRouter set for this connector`);
     }

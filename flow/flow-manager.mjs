@@ -4,14 +4,14 @@ import FlowRouter from './flow-router.mjs';
 export default class FlowManager {
     static instance;
     flows = {};
-    constructor() {
+    constructor(config = {}) {
       if (FlowManager.instance) {
         return FlowManager.instance;
       }
       FlowManager.instance = this;
       this.flowMonitor = new FlowMonitor();
       this.flowRouter = new FlowRouter();
-      this.logging = true;
+      this.logging = config.logging || false;
       this.updateFlowMonitor();
     }
     
@@ -20,7 +20,7 @@ export default class FlowManager {
         if(this.logging) console.log(`[FlowManager][info] Handling message '${message.id}' from ${message.origin}:${message.sender} for ${message.recipient}`);
         let flow = this.getFlow(message.recipient);
         if (!flow) {
-          console.log(`[FlowManager][info] Flow ${message.recipient} not found.  Returning message.`);
+          if(this.logging) console.log(`[FlowManager][info] Flow ${message.recipient} not found.  Returning message.`);
           return message;
         }
         let response = await flow.run(message);
@@ -42,11 +42,11 @@ export default class FlowManager {
     addFlow(flowName, flowInstance) {
       if (!this.flows[flowName]) {
         this.flows[flowName] = flowInstance;
-        console.log(`[FlowManager][info] Flow '${flowName}' added.`);
+        if(this.logging) console.log(`[FlowManager][info] Flow '${flowName}' added.`);
         this.updateFlowMonitor();
         this.updateFlowRouter();
       } else {
-        console.log(`[FlowManager][info] Flow '${flowName}' already exists.`);
+        if(this.logging) console.log(`[FlowManager][info] Flow '${flowName}' already exists.`);
       }
     }
 
@@ -54,10 +54,10 @@ export default class FlowManager {
     removeFlow(flowName) {
       if (this.flows[flowName]) {
         delete this.flows[flowName];
-        console.log(`[FlowManager][info] Flow '${flowName}' removed.`);
+        if(this.logging) console.log(`[FlowManager][info] Flow '${flowName}' removed.`);
         this.updateFlowMonitor();
       } else {
-        console.log(`[FlowManager][info] Flow '${flowName}' doesn't exist.`);
+        if(this.logging) console.log(`[FlowManager][info] Flow '${flowName}' doesn't exist.`);
       }
     }
 

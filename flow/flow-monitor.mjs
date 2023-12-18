@@ -2,11 +2,11 @@ import { tools } from './tools.mjs';
 
 export default class FlowMonitor {
 
-    constructor() {
+    constructor(config = {}) {
       if(FlowMonitor.exists) {
         return FlowMonitor.instance;
       }
-      this.logging = false;
+      this.logging = config.logging || false;
       this.nodeUsageData = {};
       this.availableFlowsAndUsage = {};
       FlowMonitor.instance = this;
