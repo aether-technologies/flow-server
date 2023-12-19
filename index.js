@@ -14,7 +14,7 @@ import ModuleLoaderFlow from './flow/module-loader.mjs'
 import { tools } from './flow/tools.mjs';
 
 export default class FlowNode extends BaseFlowNode {
-  constructor(config) {
+  constructor(config = {}) {
     super(config.id || "FlowNode", config);
 
     this.initialize();
