@@ -33,33 +33,34 @@ export default class ModuleLoaderFlow extends Flow {
             console.error(error);
         }
     }
-}
-
-function fileExists(path) {
-    try {
-        fs.accessSync(path, fs.constants.F_OK);
-        return true;
-    } catch (err) {
-        return false;
-    }
-}
-
-async function findFileInDirectory(directoryPath, fileName) {
-    if(this.logging) console.log("fs :: ",fs);
-    const files = await fs.readdir(directoryPath);
-    for (const file of files) {
-        const filePath = path.join(directoryPath, file);
-        const fileStat = await fs.stat(filePath);
-        if (fileStat.isDirectory()) {
-            const foundFilePath = await findFileInDirectory(filePath, fileName);
-            if (foundFilePath) {
-                return foundFilePath;
-            }
-        } else if (file.startsWith(fileName) && (file.endsWith('.js') || file.endsWith('.mjs'))) {
-            return filePath;
+    
+    fileExists(path) {
+        try {
+            fs.accessSync(path, fs.constants.F_OK);
+            return true;
+        } catch (err) {
+            return false;
         }
     }
-    return null;
+    
+    async findFileInDirectory(directoryPath, fileName) {
+        const files = await fs.readdir(directoryPath);
+        for (const file of files) {
+            const filePath = path.join(directoryPath, file);
+            const fileStat = await fs.stat(filePath);
+            if (fileStat.isDirectory()) {
+                const foundFilePath = await findFileInDirectory(filePath, fileName);
+                if (foundFilePath) {
+                    return foundFilePath;
+                }
+            } else if (file.startsWith(fileName) && (file.endsWith('.js') || file.endsWith('.mjs'))) {
+                return filePath;
+            }
+        }
+        return null;
+    }
 }
+
+
 
 new ModuleLoaderFlow();
