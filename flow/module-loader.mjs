@@ -23,7 +23,7 @@ export default class ModuleLoaderFlow extends Flow {
             const file_name = split_path.pop();
             
             if(this.logging) console.log("Searching for module: " + modulePath);
-            const file_path = await findFileInDirectory('./', file_name);
+            const file_path = await this.findFileInDirectory('./', file_name);
             if(this.logging) console.log(" - ",this.root + file_path);
 
             const module = await import(this.root + file_path);
@@ -34,22 +34,13 @@ export default class ModuleLoaderFlow extends Flow {
         }
     }
     
-    fileExists(path) {
-        try {
-            fs.accessSync(path, fs.constants.F_OK);
-            return true;
-        } catch (err) {
-            return false;
-        }
-    }
-    
     async findFileInDirectory(directoryPath, fileName) {
         const files = await fs.readdir(directoryPath);
         for (const file of files) {
             const filePath = path.join(directoryPath, file);
             const fileStat = await fs.stat(filePath);
             if (fileStat.isDirectory()) {
-                const foundFilePath = await findFileInDirectory(filePath, fileName);
+                const foundFilePath = await this.findFileInDirectory(filePath, fileName);
                 if (foundFilePath) {
                     return foundFilePath;
                 }
