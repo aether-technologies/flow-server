@@ -3,8 +3,8 @@ import FlowConnector from '../flow-connector.mjs';
 import FlowMessage from '../flow-message.mjs';
 
 class WssFlowConnector extends FlowConnector {
-    constructor(id, port) {
-        super(id);
+    constructor(id, port, config = {}) {
+        super(id, config);
         this.wss = new tools.ws({ port: port });
         this.wss.on('connection', this.handleConnection.bind(this));
         this.connected = false;

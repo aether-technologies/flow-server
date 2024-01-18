@@ -3,13 +3,13 @@ import { promises as fs } from 'fs';
 import * as path from 'path';
 
 export default class ModuleLoaderFlow extends Flow {
-    constructor() {
-        super("ModuleLoaderFlow");
-        this.root = '../../../../../'; //This path stuff needs polishing and testing
+    constructor(config = {}) {
+        super("ModuleLoaderFlow", config);
+        this.root = config.root || '../../../../../'; //This path stuff needs polishing and testing
     }
     
     async run(flowMessage) {
-        console.log("FlowMessage :: ",flowMessage);
+        if(this.logging) console.log("FlowMessage :: ",flowMessage);
         let modulePath = flowMessage.content;
         let split_path;
         try {
@@ -22,9 +22,9 @@ export default class ModuleLoaderFlow extends Flow {
             split_path = modulePath.split("/");
             const file_name = split_path.pop();
             
-            console.log("Searching for module: " + modulePath);
+            if(this.logging) console.log("Searching for module: " + modulePath);
             const file_path = await findFileInDirectory('./', file_name);
-            console.log(" - ",this.root + file_path);
+            if(this.logging) console.log(" - ",this.root + file_path);
 
             const module = await import(this.root + file_path);
             
@@ -45,7 +45,7 @@ function fileExists(path) {
 }
 
 async function findFileInDirectory(directoryPath, fileName) {
-    console.log("fs :: ",fs);
+    if(this.logging) console.log("fs :: ",fs);
     const files = await fs.readdir(directoryPath);
     for (const file of files) {
         const filePath = path.join(directoryPath, file);

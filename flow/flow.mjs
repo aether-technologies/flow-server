@@ -1,8 +1,9 @@
 import FlowManager from "./flow-manager.mjs";
 import FlowRouter from "./flow-router.mjs";
 export default class Flow {
-    constructor(id) {
+    constructor(id, config = {}) {
         this.id = id;
+        this.logging = config.logging || false;
         // create an instance of FlowManager
         const flowManager = new FlowManager();
         this.flowRouter = new FlowRouter();
