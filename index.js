@@ -9,8 +9,6 @@ import FlowConnector from './flow/flow-connector.mjs';
 import FlowMessage from './flow/flow-message.mjs';
 import Flow from './flow/flow.mjs';
 
-import ModuleLoaderFlow from './flow/module-loader.mjs'
-
 import { tools } from './flow/tools.mjs';
 
 export default class FlowNode extends BaseFlowNode {
@@ -19,7 +17,8 @@ export default class FlowNode extends BaseFlowNode {
 
     this.initialize();
     this.flowRouter.addConnector(new LocalFlowConnector());
-    this.flowRouter.addConnector(new WssFlowConnector('WSS-1', 8000));
+    //TODO: Add logic to dynamically add connectors (client & server) based on config
+    this.flowRouter.addConnector(new WssFlowConnector(config.wss_id || 'WSS-1', config.wss_port || 8000));
   }
 }
 
