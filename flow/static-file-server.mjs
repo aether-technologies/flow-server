@@ -103,3 +103,6 @@ export default class StaticFileServerFlow extends Flow {
         }
     }
 }
+
+
+new StaticFileServerFlow();
