@@ -1,29 +1,34 @@
+import http from 'http';
+import https from 'https';
 import { promises as fs } from 'fs';
+import os from 'os';
 import path from 'path';
-import { Flow } from './flow.mjs';
+import Flow from './flow.mjs';
+
+const __dirname = path.dirname(new URL(import.meta.url).pathname).slice(os.platform() === 'win32' ? 1 : 0);
 
 export default class StaticFileServerFlow extends Flow {
     constructor(id, config = {}) {
       super(id, config);
-      this.base_web_path = path.normalize(path.join(__dirname, GLOBAL_CONFIG.WEB_DIR || '../www'));
-      this.root_endpoint = GLOBAL_CONFIG.ROOT_ENDPOINT || '/'+GLOBAL_CONFIG.NAME;
+      this.base_web_path = path.normalize(config.WEB_DIR || path.join(__dirname, '../www'));
+      this.root_endpoint = config.ROOT_ENDPOINT || '/'+config.NAME;
         
-      this.initialize();
+      this.initialize(config);
     }
-    async initialize() {
-      if (GLOBAL_CONFIG.SSL_CERTIFICATE) {
+    async initialize(config) {
+      if (config.SSL_CERTIFICATE) {
         const options = {
-          key: await fs.readFile(GLOBAL_CONFIG.SSL_PRIVATE_KEY),
-          cert: await fs.readFile(GLOBAL_CONFIG.SSL_CERTIFICATE)
+          key: await fs.readFile(config.SSL_PRIVATE_KEY),
+          cert: await fs.readFile(config.SSL_CERTIFICATE)
         };
-        this.RESTServer = https.createServer(options, this.handleRequest);
-        this.listen(GLOBAL_CONFIG.PORT, () => {
-          console.log(`Secure server running at https://localhost:${GLOBAL_CONFIG.PORT}`);
+        this.RESTServer = https.createServer(options, this.handleRequest.bind(this));
+        this.listen(config.PORT, () => {
+          console.log(`Secure server running at https://localhost:${config.PORT}`);
         });
       } else {
-        this.RESTServer = http.createServer(this.handleRequest);
-        this.RESTServer.listen(GLOBAL_CONFIG.PORT, () => {
-          console.log(`Server running at http://localhost:${GLOBAL_CONFIG.PORT}`);
+        this.RESTServer = http.createServer(this.handleRequest.bind(this));
+        this.RESTServer.listen(config.PORT, () => {
+          console.log(`Server running at http://localhost:${config.PORT}`);
         });
       }
     }
@@ -40,21 +45,20 @@ export default class StaticFileServerFlow extends Flow {
       let requestPath = req.url;
     
       // Check if the request is for the specific endpoint
-      if (requestPath.startsWith(root_endpoint)) {
+      if (requestPath.startsWith(this.root_endpoint)) {
         // Remove the root_endpoint from the relativePath
-        requestPath = requestPath.slice(root_endpoint.length);
+        requestPath = requestPath.slice(this.root_endpoint.length);
       }
-    
+      
       // console.log("requestPath: ", requestPath);
       const relativePath = requestPath === '/' || requestPath === '' ? '/index.html' : requestPath;
-      // console.log("relativePath: ", relativePath);
-      const filePath = path.join(base_web_path, relativePath);
+      const filePath = path.join(this.base_web_path, relativePath);
       // console.log("filePath: ", filePath);
     
       try {
         await fs.access(filePath);
       } catch(error) {
-        if(info_logging) console.error(error);
+        if(this.logging) console.error(error);
         res.writeHead(404);
         res.end('404 Not Found');
         return;
@@ -63,7 +67,7 @@ export default class StaticFileServerFlow extends Flow {
       if(filePath) {
     
         try {
-          const contentType = getContentType(path.extname(filePath));
+          const contentType = this.getContentType(path.extname(filePath));
           const content = await fs.readFile(filePath, 'utf-8');
           res.writeHead(200, { 'Content-Type': contentType });
           res.end(content, 'utf-8');
@@ -103,6 +107,3 @@ export default class StaticFileServerFlow extends Flow {
         }
     }
 }
-
-
-new StaticFileServerFlow();

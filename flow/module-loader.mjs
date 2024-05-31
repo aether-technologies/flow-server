@@ -3,8 +3,8 @@ import { promises as fs } from 'fs';
 import * as path from 'path';
 
 export default class ModuleLoaderFlow extends Flow {
-    constructor(config = {}) {
-        super("ModuleLoaderFlow", config);
+    constructor(id, config = {}) {
+        super(id || "ModuleLoaderFlow", config);
         this.root = config.root || '../../../../../'; //This path stuff needs polishing and testing
     }
     
@@ -51,7 +51,3 @@ export default class ModuleLoaderFlow extends Flow {
         return null;
     }
 }
-
-
-
-new ModuleLoaderFlow();
