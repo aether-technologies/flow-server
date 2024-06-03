@@ -22,7 +22,7 @@ export default class StaticFileServerFlow extends Flow {
           cert: await fs.readFile(config.SSL_CERTIFICATE)
         };
         this.RESTServer = https.createServer(options, this.handleRequest.bind(this));
-        this.listen(config.PORT, () => {
+        this.RESTServer.listen(config.PORT, () => {
           console.log(`Secure server running at https://localhost:${config.PORT}`);
         });
       } else {
