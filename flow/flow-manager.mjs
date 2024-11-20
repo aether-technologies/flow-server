@@ -34,6 +34,10 @@ export default class FlowManager {
       }
     }
     
+    listFlows() {
+      return [...this.flows];
+    }
+
     getFlow(id) {
       return this.flows[id];
     }

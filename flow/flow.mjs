@@ -17,4 +17,23 @@ export default class Flow {
     async send(flowMessage) {
         this.flowRouter.routeFlowMessage(flowMessage);
     }
+
+    // (BNS - 24/11/17) Added to support LLM agents using flows as tools
+    name() {
+        return config.definition?.name || config.name;
+    }
+
+    description() {
+        return config.definition?.description || config.description;
+    }
+
+    inputFormat() {
+        return config.definition?.input || config.inputFormat;
+    }
+
+    outputFormat() {
+        return config.definition?.output || config.outputFormat;
+    }
+
+
 }
