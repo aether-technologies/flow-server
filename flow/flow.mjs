@@ -34,6 +34,4 @@ export default class Flow {
     outputFormat() {
         return config.definition?.output || config.outputFormat;
     }
-
-
 }
